@@ -1,0 +1,76 @@
+class Point{
+    PVector pos;
+    ArrayList<PVector> rays = new ArrayList<PVector>();
+    Point(PVector xy){
+        pos = xy;
+        for (int a = 0; a<360; a+=10){
+            float x = cos(radians(a))*10;
+            float y = sin(radians(a))*10;
+            rays.add(new PVector(x, y));
+        }
+    }
+
+    void show(PVector[] walls){
+        for (int ray = 0; ray<rays.size(); ray++){
+			line(pos.x, pos.y, rays.get(ray).x, rays.get(ray).y);
+            for (int wall = 1; wall<walls.length; wall+=2){
+                PVector inter = intersect(pos, PVector.add(rays.get(ray), pos), walls[wall-1], walls[wall]);
+                if (inter != null){
+                    line(pos.x, pos.y, inter.x, inter.y);
+                }
+            }
+        }
+
+    }
+
+	void update(PVector pos2){
+		pos = pos2;
+	}
+}
+
+
+PVector intersect(PVector p1, PVector p2, PVector p3, PVector p4){
+	float x1 = p3.x;
+	float y1 = p3.y;
+	float x2 = p4.x;
+	float y2 = p4.y;
+	
+	float x3 = p1.x;
+	float y3 = p1.y;
+	float x4 = p2.x;
+	float y4 = p2.y;
+	
+	float den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+	if  (den == 0){
+		return null;
+	}
+	float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+	float u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+	if (0 < t && t < 1 && u > 0){
+		PVector sol = new PVector(x1+t*(x2-x1), y1+t*(y2-y1));
+		return sol;
+	}
+	return null;
+}
+
+PVector[] bounds = new PVector[4];
+Point p;
+void setup(){
+	size(800, 600);
+	bounds[0] = new PVector(200, 100);
+	bounds[1] = new PVector(300, 500);
+  bounds[2] = new PVector(500, 200);
+  bounds[3] = new PVector(650, 450);
+	p = new Point(new PVector(mouseX, mouseY));
+}
+
+
+void draw(){
+    background(0);
+	stroke(255);
+	p.update(new PVector(mouseX, mouseY));
+	p.show(bounds);
+	for (int i = 1; i<bounds.length; i+=2){
+		line(bounds[i-1].x, bounds[i-1].y, bounds[i].x, bounds[i].y);
+	}
+}
