@@ -15,16 +15,11 @@ void drawBox(PVector pos){
 }
 void addBox(PVector pos){
 	push();
-	PVector[] points = {new PVector(mouseX, mouseY), new PVector(mouseX, pos.y), pos,
-		new PVector(pos.x, mouseY)};
+	PVector[] points = {new PVector(mouseX, mouseY), new PVector(mouseX, pos.y), new PVector(pos.x, mouseY),
+		pos};
 	for (int i = 0; i<points.length; i++){
 		bounds.add(points[i]);
-		if (i != points.length-1){
-			bounds.add(points[i+1]);
-		} else{
-			bounds.add(points[0]);
-		}
-		
+		bounds.add(points[i]);
 	}
 	pop();
 }
@@ -37,8 +32,8 @@ class Point{
     Point(PVector xy){
         pos = xy;
         angle = 0;
-        fow = 20;
-		density = 0.1;
+        fow = 30;
+		density = 0.5;
         for (float a = angle; a<angle+fow; a+=density){
             float x = cos(radians(a))*10;
             float y = sin(radians(a))*10;
@@ -46,7 +41,7 @@ class Point{
         }
     }
 	void setAngle(float deg){
-		rays.clear();
+		ArrayList<PVector> rays = new ArrayList<PVector>();
 		angle = deg;
         for (float a = angle; a<angle+fow; a+=density){
             float x = cos(radians(a))*10;
@@ -143,13 +138,10 @@ void draw(){
 	circle(lastPos.x, lastPos.y, 10);
   	if (keyPressed){
     	if (key == 'a'){
-			p.fow += 2;
-    		p.setAngle(p.angle);
+    		p.setAngle(p.angle-0.5);
     	}else if (key == 'd'){
-			p.fow -= 2;
-      		p.setAngle(p.angle);
+      		p.setAngle(p.angle+0.5);
 		}
-		print(p.fow, '\n');
   	}
 	if (click){
 		drawBox(mPos);
@@ -171,17 +163,17 @@ void mousePressed(){
 }
 
 void view(ArrayList<Float> lis){
-	float scl = width / 2 / float(lis.size());
+	float scl = width/2/lis.size();
 	float maxD = dist(0, 0, width/2, height);
 	for (int i = 0; i < lis.size(); i++){
-		int colo = int(map(lis.get(i), 0, maxD, 230, 0));
-		int size = int(map(lis.get(i)*lis.get(i), 0, maxD*maxD, height-30, 0));
+		int colo = int(map(lis.get(i), 0, maxD, 220, 0));
+		int size = int(map(lis.get(i), 0, maxD, height, 15));
 		push();
 		rectMode(CENTER);
 		noStroke();
     	fill(colo);
-		translate(i*scl+(width/2)+scl/2, height/2);
-		rect(0, 0, scl+1, size);
+		translate(i*scl+width/2, height/2);
+		rect(scl/2, 0, scl, size);
 		pop();
 	}
 }

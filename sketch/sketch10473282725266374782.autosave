@@ -143,13 +143,10 @@ void draw(){
 	circle(lastPos.x, lastPos.y, 10);
   	if (keyPressed){
     	if (key == 'a'){
-			p.fow += 2;
-    		p.setAngle(p.angle);
+    		p.setAngle(p.angle-0.5);
     	}else if (key == 'd'){
-			p.fow -= 2;
-      		p.setAngle(p.angle);
+      		p.setAngle(p.angle+0.5);
 		}
-		print(p.fow, '\n');
   	}
 	if (click){
 		drawBox(mPos);
@@ -174,8 +171,9 @@ void view(ArrayList<Float> lis){
 	float scl = width / 2 / float(lis.size());
 	float maxD = dist(0, 0, width/2, height);
 	for (int i = 0; i < lis.size(); i++){
-		int colo = int(map(lis.get(i), 0, maxD, 230, 0));
-		int size = int(map(lis.get(i)*lis.get(i), 0, maxD*maxD, height-30, 0));
+		print(scl*lis.size(), lis.size(), scl, width/2, '\n');
+		int colo = int(map(lis.get(i), 0, maxD, 255, 0));
+		int size = int(map(lis.get(i), 0, maxD, height-20, 0));
 		push();
 		rectMode(CENTER);
 		noStroke();
@@ -184,4 +182,5 @@ void view(ArrayList<Float> lis){
 		rect(0, 0, scl+1, size);
 		pop();
 	}
+	print('\n');
 }

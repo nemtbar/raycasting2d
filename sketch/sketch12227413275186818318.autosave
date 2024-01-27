@@ -37,8 +37,8 @@ class Point{
     Point(PVector xy){
         pos = xy;
         angle = 0;
-        fow = 20;
-		density = 0.1;
+        fow = 30;
+		density = 1;
         for (float a = angle; a<angle+fow; a+=density){
             float x = cos(radians(a))*10;
             float y = sin(radians(a))*10;
@@ -143,13 +143,10 @@ void draw(){
 	circle(lastPos.x, lastPos.y, 10);
   	if (keyPressed){
     	if (key == 'a'){
-			p.fow += 2;
-    		p.setAngle(p.angle);
+    		//p.setAngle(p.angle-0.5);
     	}else if (key == 'd'){
-			p.fow -= 2;
-      		p.setAngle(p.angle);
+      		//p.setAngle(p.angle+0.5);
 		}
-		print(p.fow, '\n');
   	}
 	if (click){
 		drawBox(mPos);
@@ -171,17 +168,21 @@ void mousePressed(){
 }
 
 void view(ArrayList<Float> lis){
-	float scl = width / 2 / float(lis.size());
+	float scl = width / 3 / lis.size();
 	float maxD = dist(0, 0, width/2, height);
 	for (int i = 0; i < lis.size(); i++){
-		int colo = int(map(lis.get(i), 0, maxD, 230, 0));
-		int size = int(map(lis.get(i)*lis.get(i), 0, maxD*maxD, height-30, 0));
+		print(scl*lis.size(), width/2, scl, '\n');
+		int colo = int(map(lis.get(i), 0, maxD, 255, 0));
+		int size = int(map(lis.get(i), 0, maxD, height, 0));
 		push();
 		rectMode(CENTER);
 		noStroke();
     	fill(colo);
 		translate(i*scl+(width/2)+scl/2, height/2);
-		rect(0, 0, scl+1, size);
+		rect(0, 0, scl, size);
+		fill(255, 0, 0);
+		circle(0, 0, 10);
 		pop();
 	}
+	print('\n');
 }
