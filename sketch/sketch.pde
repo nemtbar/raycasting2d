@@ -14,7 +14,6 @@ void drawBox(PVector pos){
 	pop();
 }
 void addBox(PVector pos){
-	push();
 	PVector[] points = {new PVector(mouseX, mouseY), new PVector(mouseX, pos.y), pos,
 		new PVector(pos.x, mouseY)};
 	for (int i = 0; i<points.length; i++){
@@ -26,10 +25,9 @@ void addBox(PVector pos){
 		}
 		
 	}
-	pop();
 }
 
-class Point{
+class Point2{
     PVector pos;
     ArrayList<PVector> rays = new ArrayList<PVector>();
 	ArrayList<Float> meet = new ArrayList<Float>();
