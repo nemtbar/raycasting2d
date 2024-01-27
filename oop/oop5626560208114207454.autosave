@@ -8,7 +8,7 @@ class Point{
     Point(PVector po, float spac){
         angle = 0;
         fow = 45;
-        density = 0.2;
+        density = 0.25;
         pos = po;
         space = spac;
         addBox(new PVector(0, 0), new PVector(space, height));
@@ -144,7 +144,6 @@ void draw() {
     //rotate
     p.rot('a', 'd');
     p.show();
-    flor(p.space);
     p.view();
 
 }
@@ -156,17 +155,5 @@ void mousePressed(){
     }else{
         click = true;
         mPos = new PVector(mouseX, mouseY);
-    }
-}
-
-void flor(float space){
-    float scl = height/2/255.0; 
-    for (int i = 0; i<255; i++){
-        push();
-        rectMode(CENTER);
-        noStroke();
-        fill(map(i, 0, 255, 255, 0));
-        rect(space+(width-space)/2, height-i*scl, width-space, scl+1);
-        pop();
     }
 }
