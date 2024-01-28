@@ -1,6 +1,6 @@
 class Point{
     ArrayList<PVector> walls = new ArrayList<PVector>();
-    PVector[] rays;
+    ArrayList<PVector> rays = new ArrayList<PVector>();
     //list of the lengths of the rays
     ArrayList<Float> dis = new ArrayList<Float>();
     float angle, fow, density, space;
@@ -17,21 +17,15 @@ class Point{
     }
 
     void createRays(){
-        int f = int(fow/density);
-        rays = new PVector[f];
-        int c = 0;
+        rays.clear();
         for (float i = angle; i<angle+fow; i+=density){
-            print(i, '\n');
             float x = cos(radians(i));
             float y = sin(radians(i));
-            rays[c] = new PVector(x, y);
-            c++;
+            rays.add(new PVector(x, y));
         }
-        print(rays.length, c, '\n');
     }
 
     void show(){
-        print(rays.length);
         dis.clear();
         //draw walls
         for(int i = 1; i<walls.size(); i+=2){
@@ -41,12 +35,11 @@ class Point{
             return;
         }
         //draw rays
-        for(int ray = 0; ray<rays.length; ray++){
-            print("ok", '\n');
+        for(int ray = 0; ray<rays.size(); ray++){
             float record = 10000000.0;
             PVector closest = null;
             for(int wall = 1; wall<walls.size(); wall+=2){
-                PVector inter = intersect(PVector.add(rays[ray], pos), walls.get(wall-1), walls.get(wall));
+                PVector inter = intersect(PVector.add(rays.get(ray), pos), walls.get(wall-1), walls.get(wall));
                 if (inter != null){
                     //decide which is the closest wall
                     float d = dist(inter.x, inter.y, pos.x, pos.y);
@@ -106,7 +99,7 @@ class Point{
         }
     }
 
-    void view3d(){
+    void view(){
         float scl = (width-space)/float(dis.size());
         float maxD = dist(width, height, space, 0);
         for (int i = 0; i<dis.size(); i++){
@@ -123,12 +116,26 @@ class Point{
 
     void rot(char a, char d){
         if (keyPressed){
-            if(key == a){
-                angle -= 0.5;
+            if (key == a){
+                angle -= 3;
                 createRays();
             }else if (key == d){
-                angle += 0.5;
+                angle += 3;
                 createRays();
+            }
+        }
+    }
+    
+    void move(char w, char s){
+        if (keyPressed){
+            if (key == w){
+                float dirA = angle + fow/2;
+                PVector dirV = PVector.fromAngle(radians(dirA)).setMag(6);
+                pos.add(dirV);
+            }else if (key == s){
+                float dirA = angle + fow/2;
+                PVector dirV = PVector.fromAngle(radians(dirA)).setMag(6);
+                pos.sub(dirV);
             }
         }
     }
@@ -141,17 +148,29 @@ boolean click = false;
 void setup() {
     fullScreen();
     p = new Point(new PVector(mouseX, mouseY), width/2);
+    //p.addBox(new PVector(0, 0), new PVector(width, height));
 }
 
 void draw() {
     background(0);
     stroke(255);
-    p.update(mouseX, mouseY);
+    //p.update(mouseX, mouseY);
     //rotate
     p.rot('a', 'd');
+    p.move('w', 's');
     p.show();
-    floor();
-    p.view3d();
+    flor(p.space);
+    p.view();
+    if (click){
+        noFill();
+        beginShape();
+        vertex(mouseX, mouseY);
+        vertex(mPos.x, mouseY);
+        vertex(mPos.x, mPos.y);
+        vertex(mouseX, mPos.y);
+        endShape(CLOSE);
+        fill(255);
+    }
 
 }
 
@@ -164,14 +183,15 @@ void mousePressed(){
         mPos = new PVector(mouseX, mouseY);
     }
 }
-void floor(){
+
+void flor(float space){
     float scl = height/2/255.0; 
-    for(int i = 0; i < 255; i++){
+    for (int i = 0; i<255; i++){
         push();
+        rectMode(CENTER);
         noStroke();
         fill(map(i, 0, 255, 255, 0));
-        rectMode(CENTER);
-        rect(width/4*3, height-scl*i, width/2, scl+1);
+        rect(space+(width-space)/2, height-i*scl, width-space, scl+1);
         pop();
     }
 }
